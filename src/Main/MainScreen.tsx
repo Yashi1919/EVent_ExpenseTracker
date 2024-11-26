@@ -1,29 +1,43 @@
 import React from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import ActiveEvents from "./ActiveEvents";
+import CreateEvents from "./CreateEvents";
+import Profile from "./Profile";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
-export default function MainScreen({ navigation }: any) {
-  const handleLogout = async () => {
-    navigation.replace("Login"); // Replace the current stack to prevent back navigation to MainScreen
-  };
+// Create bottom tabs
+const Tab = createBottomTabNavigator();
 
+export default function MainScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Welcome to the Main Screen!</Text>
-      <Button title="Logout" onPress={handleLogout} />
-    </View>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === "ActiveEvents") {
+            iconName = focused ? "event" : "event-note";
+          } else if (route.name === "CreateEvents") {
+            iconName = focused ? "add-box" : "add";
+          } else if (route.name === "Profile") {
+            iconName = focused ? "account-circle" : "person-outline";
+          }
+
+          return <MaterialIcons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "#6c63ff",
+        tabBarInactiveTintColor: "gray",
+        tabBarStyle: {
+          backgroundColor: "#ffffff",
+          borderTopWidth: 1,
+          borderTopColor: "#cccccc",
+        },
+        headerShown: false, // Disable header for all tabs
+      })}
+    >
+      <Tab.Screen name="CreateEvents" component={CreateEvents} />
+      <Tab.Screen name="Profile" component={Profile} />
+    </Tab.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f9f9f9",
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-});
