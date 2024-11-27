@@ -46,38 +46,13 @@ const Statistics: React.FC<{ event: any }> = ({ event }) => {
   return (
     <View style={tw`flex-1 bg-gray-100`}>
       {/* Header */}
-      <View style={tw`bg-purple-200 py-4`}>
-        <Text style={tw`text-lg font-bold text-gray-800 text-center`}>
+      <View style={[tw`bg-purple-200 py-4`,{backgroundColor:"#6c63ff"}]}>
+        <Text style={[tw`text-lg font-bold text-gray-800 text-center`,{color:"white"}]}>
           Statistics
         </Text>
       </View>
 
-      {/* Total Expense */}
-      <View style={[styles.summaryContainer, tw`p-4 m-4 rounded-lg shadow`]}>
-        <Text style={tw`text-lg font-bold text-gray-800`}>
-          Total Expenses: ₹{totalExpense.toFixed(2)}
-        </Text>
-      </View>
-
-      {/* Expense List */}
-      <View style={tw`p-4`}>
-        <Text style={tw`text-lg font-bold text-gray-800 mb-2`}>Expenses</Text>
-        <FlatList
-          data={expenses}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View style={[styles.expenseItem, tw`p-4 mb-2 rounded-lg shadow`]}>
-              <Text style={tw`text-lg font-bold text-gray-800`}>
-                {item.type}
-              </Text>
-              <Text style={tw`text-gray-700`}>Amount: ₹{item.amount.toFixed(2)}</Text>
-              {item.message && (
-                <Text style={tw`text-gray-600`}>Message: {item.message}</Text>
-              )}
-            </View>
-          )}
-        />
-      </View>
+     
     </View>
   );
 };

@@ -22,6 +22,7 @@ const Expenses: React.FC<{ event: any }> = ({ event }) => {
   const [amount, setAmount] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [photo, setPhoto] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState(null);
 
   // Load full event data from AsyncStorage
   const loadEventData = async () => {
@@ -124,17 +125,25 @@ const Expenses: React.FC<{ event: any }> = ({ event }) => {
 
   return (
     <View style={tw`flex-1 bg-gray-100`}>
+       <View style={[tw`bg-purple-200 py-4`,{backgroundColor:"#6c63ff"}]}>
+        <Text style={[tw`text-lg font-bold text-gray-800 text-center`,
+          {
+            color:"#ffffff"
+          }]}>
+          Expenses
+        </Text>
+      </View>
       {/* Event Name and Total Amount */}
       <View
         style={[
           tw`mb-5 bg-purple-200 rounded-lg p-4 shadow items-center justify-center`,
-          { width: "90%", height: "25%", alignSelf: "center", marginTop: 20 },
+          { width: "90%", height: "25%", alignSelf: "center", marginTop: 20,backgroundColor:"#6c63ff" },
         ]}
       >
-        <Text style={tw`text-xl font-bold text-gray-800 text-center`}>
+        <Text style={[tw`text-xl font-bold text-gray-800 text-center`,{color:"#ffffff"}]}>
           {eventData.name}
         </Text>
-        <Text style={tw`text-lg text-gray-700 mt-3 text-center`}>
+        <Text style={[tw`text-xl font-bold text-gray-800 text-center`,{color:"#ffffff"}]}>
           Total Amount: {eventData.totalAmount.toFixed(2)} rs
         </Text>
       </View>
@@ -142,13 +151,13 @@ const Expenses: React.FC<{ event: any }> = ({ event }) => {
       {/* Floating Add Button */}
       <TouchableOpacity
         style={[
-          tw`absolute bg-purple-600 rounded-full items-center justify-center shadow-lg`,
+          tw`absolute rounded-full items-center justify-center shadow-lg`,
           {
-            width: 60,
-            height: 60,
-            bottom: 90,
-            left: "50%",
-            transform: [{ translateX: -30 }],
+            width: 150,
+            height: 150,
+            bottom: 180,
+            backgroundColor:"#6c63ff",
+            alignSelf:"center"
           },
         ]}
         onLongPress={() => setIsModalVisible(true)} // Open modal on long press

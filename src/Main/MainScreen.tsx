@@ -4,11 +4,15 @@ import ActiveEvents from "./ActiveEvents";
 import CreateEvents from "./CreateEvents";
 import Profile from "./Profile";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // Create bottom tabs
 const Tab = createBottomTabNavigator();
 
-export default function MainScreen() {
+export default function MainScreen({route}:any) {
+  const {username}=route.params
+  
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -35,8 +39,8 @@ export default function MainScreen() {
         headerShown: false, // Disable header for all tabs
       })}
     >
-      <Tab.Screen name="CreateEvents" component={CreateEvents} />
-      <Tab.Screen name="Profile" component={Profile} />
+      <Tab.Screen name="CreateEvents" component={CreateEvents} initialParams={{username}}/>
+      <Tab.Screen name="Profile" component={Profile} initialParams={{username}} />
     </Tab.Navigator>
   );
 }

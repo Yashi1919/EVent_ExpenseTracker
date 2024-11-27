@@ -6,26 +6,58 @@ import {
   TextInput,
   Alert,
   Image,
+  ScrollView,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import ImagePicker from "react-native-image-crop-picker"; // Image picker for uploading and cropping photos
 import tw from "twrnc"; // Tailwind classes for styling
+import { useRoute, useNavigation } from "@react-navigation/native";
+import AboutAppModal from "../Modals/AboutAppModal";
+import HelpModal from "../Modals/HelpModal";
+import PremiumModal from "../Modals/PremiumModal";
+import ContactUsModal from "../Modals/ContactUsModal";
 
 export default function Profile() {
+  const route = useRoute();
+  const navigation = useNavigation();
+  const { username } = route.params; // Get the username from route params
+
   const [profileImage, setProfileImage] = useState(null);
   const [userName, setUserName] = useState("");
   const [eventCount, setEventCount] = useState(0);
 
+  const profileKey = `${username}profile`; // Create a unique key for this user's profile
+
+  const [aboutVisible, setAboutVisible] = useState(false);
+  const [premiumVisible, setPremiumVisible] = useState(false);
+  const [contactVisible, setContactVisible] = useState(false);
+  const [helpVisible, setHelpVisible] = useState(false);
+
+ const loadUserCount=async ()=>{
+  try{
+    const countData=await AsyncStorage.getItem(username)
+    if(countData){
+     const data=JSON.parse(countData)
+     console.log(data["events"].length)
+     setEventCount(data["events"].length)  
+    }
+  }
+  catch (error) {
+    console.error("Failed to load user data from AsyncStorage:", error);
+  }
+ }
+ 
   // Load user data from AsyncStorage
   const loadUserData = async () => {
     try {
-      const storedData = await AsyncStorage.getItem("userProfile");
+      const storedData = await AsyncStorage.getItem(profileKey);
       if (storedData) {
         const { profileImage, userName, eventCount } = JSON.parse(storedData);
         setProfileImage(profileImage || null);
         setUserName(userName || "");
-        setEventCount(eventCount || 0);
+        
       }
     } catch (error) {
       console.error("Failed to load user data from AsyncStorage:", error);
@@ -36,7 +68,7 @@ export default function Profile() {
   const saveUserData = async () => {
     try {
       const userData = { profileImage, userName, eventCount };
-      await AsyncStorage.setItem("userProfile", JSON.stringify(userData));
+      await AsyncStorage.setItem(profileKey, JSON.stringify(userData));
       Alert.alert("Success", "Profile updated successfully!");
     } catch (error) {
       console.error("Failed to save user data to AsyncStorage:", error);
@@ -64,20 +96,35 @@ export default function Profile() {
   // Load user data when the component mounts
   useEffect(() => {
     loadUserData();
+    loadUserCount();
   }, []);
 
+  useFocusEffect(()=>{
+    loadUserData();
+    loadUserCount();
+  })
+
   return (
+    <ScrollView>
     <View style={tw`flex-1 p-5 bg-gray-100`}>
-      <Text style={tw`text-2xl font-bold text-center mb-5 text-gray-800`}>
+      <Text style={[tw`text-2xl font-bold text-center mb-5 text-gray-800`,{color:"#6c63ff"}]}>
         Profile
       </Text>
 
       {/* Profile Image */}
+      <View style={[tw`flex-row justify-between items-center p-4 bg-gray-100 rounded-lg shadow-lg`]}>
+      <TextInput
+        style={[tw`rounded p-2 mb-3`,{fontWeight:"bold",fontSize:23,color:"#6c63ff"}]}
+        placeholder="Enter your name"
+        placeholderTextColor="#6c63ff"
+        value={userName}
+        onChangeText={setUserName}
+      />
       <TouchableOpacity onPress={handleImageUpload} style={tw`items-center mb-5`}>
         {profileImage ? (
           <Image
             source={{ uri: profileImage }}
-            style={tw`w-32 h-32 rounded-full border-2 border-purple-600`}
+            style={[tw`w-32 h-32  border-2 border-purple-600`,{borderRadius:8}]}
           />
         ) : (
           <View
@@ -86,43 +133,77 @@ export default function Profile() {
             <MaterialIcons name="person" size={48} color="#6b7280" />
           </View>
         )}
-        <Text style={tw`text-sm text-gray-600 mt-2`}>Tap to upload image</Text>
+        
       </TouchableOpacity>
 
-      {/* Username Input */}
-      <TextInput
-        style={tw`border border-gray-300 rounded p-2 mb-3`}
-        placeholder="Enter your name"
-        placeholderTextColor="#000000"
-        value={userName}
-        onChangeText={setUserName}
-      />
+      
 
-      {/* Event Count Display */}
-      <View style={tw`mb-5`}>
-        <Text style={tw`text-lg font-semibold text-gray-700`}>
-          Total Events Created: {eventCount}
-        </Text>
-      </View>
-
-      {/* Save Button */}
-      <TouchableOpacity
+</View>
+<TouchableOpacity
         style={tw`bg-green-600 py-2 rounded-lg mb-3`}
         onPress={saveUserData}
       >
         <Text style={tw`text-center text-white font-bold`}>Save Profile</Text>
       </TouchableOpacity>
 
+
+      <View style={[tw`w-full bg-white p-4 rounded-lg shadow-lg mb-1`,{marginTop:1}]}>
+  <Text style={tw`text-lg font-semibold text-gray-700`}>
+    Total Events Created: {eventCount}
+  </Text>
+</View>
+
+<TouchableOpacity onPress={() => setAboutVisible(true)}>
+<View style={[tw`w-full bg-white p-4 rounded-lg shadow-lg mb-1`,{marginTop:5}]}>
+  <Text style={tw`text-lg font-semibold text-gray-700`}>
+    About App
+  </Text>
+</View>
+</TouchableOpacity>
+
+<TouchableOpacity onPress={() => setPremiumVisible(true)}>
+<View style={[tw`w-full bg-white p-4 rounded-lg shadow-lg mb-1`,{marginTop:5}]}>
+  <Text style={tw`text-lg font-semibold text-gray-700`}>
+    Premium
+  </Text>
+</View>
+</TouchableOpacity>
+
+<TouchableOpacity onPress={() => setContactVisible(true)}>
+<View style={[tw`w-full bg-white p-4 rounded-lg shadow-lg mb-1`,{marginTop:5}]}>
+  <Text style={tw`text-lg font-semibold text-gray-700`}>
+    Contact Us
+  </Text>
+</View>
+</TouchableOpacity>
+
+
+<TouchableOpacity onPress={() => setHelpVisible(true)}>
+<View style={[tw`w-full bg-white p-4 rounded-lg shadow-lg mb-1`,{marginTop:5}]}>
+  <Text style={tw`text-lg font-semibold text-gray-700`}>
+    Help
+  </Text>
+</View>
+</TouchableOpacity>
+      {/* Save Button */}
+      
+
       {/* Logout Button */}
       <TouchableOpacity
         style={tw`bg-red-500 py-2 rounded-lg`}
         onPress={() => {
-          AsyncStorage.clear();
+          navigation.navigate("Login");
           Alert.alert("Logged Out", "You have been logged out successfully.");
         }}
       >
         <Text style={tw`text-center text-white font-bold`}>Logout</Text>
       </TouchableOpacity>
     </View>
+    <AboutAppModal isVisible={aboutVisible} onClose={() => setAboutVisible(false)} />
+    <PremiumModal isVisible={premiumVisible} onClose={() => setPremiumVisible(false)} />
+      <ContactUsModal isVisible={contactVisible} onClose={() => setContactVisible(false)} />
+      <HelpModal isVisible={helpVisible} onClose={() => setHelpVisible(false)} />
+
+    </ScrollView>
   );
 }

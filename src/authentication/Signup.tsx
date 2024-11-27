@@ -1,5 +1,13 @@
 import React from "react";
-import { View, Text, TextInput, Button, Alert, TouchableOpacity, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Alert,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+} from "react-native";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,7 +22,6 @@ type SignupFormData = z.infer<typeof signupSchema>;
 
 export default function Signup({ navigation }: any) {
   const {
-    register,
     handleSubmit,
     setValue,
     formState: { errors },
@@ -28,7 +35,19 @@ export default function Signup({ navigation }: any) {
 
   const onSubmit = async (data: SignupFormData) => {
     try {
-      await AsyncStorage.setItem("user", JSON.stringify(data));
+      const storedUsers = await AsyncStorage.getItem("users");
+      const users = storedUsers ? JSON.parse(storedUsers) : [];
+
+      // Check if username already exists
+      if (users.some((user: any) => user.username === data.username)) {
+        Alert.alert("Error", "Username already exists. Please choose another one.");
+        return;
+      }
+
+      // Add new user to the list
+      const updatedUsers = [...users, data];
+      await AsyncStorage.setItem("users", JSON.stringify(updatedUsers));
+
       Alert.alert("Success", "Account created successfully!");
       navigation.navigate("Login");
     } catch (error) {
@@ -39,14 +58,12 @@ export default function Signup({ navigation }: any) {
   return (
     <View style={styles.container}>
       {/* Logo Section */}
-      <Image
-        source={require("../assets/logo.jpg")} // Replace with your logo path
-        style={styles.logo}
-      />
+     
 
       {/* Signup Form */}
       <View style={styles.card}>
         <Text style={styles.heading}>Signup</Text>
+        <View style={styles.inputContainer}>
         <TextInput
           placeholder="Username"
           placeholderTextColor="#555"
@@ -54,7 +71,9 @@ export default function Signup({ navigation }: any) {
           onChangeText={(text) => setValue("username", text)}
         />
         {errors.username && <Text style={styles.error}>{errors.username.message}</Text>}
+        </View>
 
+        <View style={styles.inputContainer}>
         <TextInput
           placeholder="Password"
           placeholderTextColor="#555"
@@ -63,6 +82,7 @@ export default function Signup({ navigation }: any) {
           onChangeText={(text) => setValue("password", text)}
         />
         {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+    </View>
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
           <Text style={styles.buttonText}>Sign Up</Text>
@@ -104,16 +124,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
-    color: "#333",
+    color: "#6c63ff",
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
+    flex: 1,
+    marginLeft: 10,
     fontSize: 16,
-    color: "#333",
+    color: "#000",
   },
   error: {
     color: "red",
@@ -126,6 +143,18 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: "center",
     marginTop: 10,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    marginBottom: 15,
+    width: "100%",
+    backgroundColor: "#f9f9f9",
   },
   buttonText: {
     color: "#fff",

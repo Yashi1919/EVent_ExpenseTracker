@@ -88,8 +88,11 @@ const Fundraisers: React.FC<{ event: any }> = ({ event }) => {
   return (
     <View style={tw`flex-1 bg-gray-100`}>
       {/* Header */}
-      <View style={tw`bg-purple-200 py-4`}>
-        <Text style={tw`text-lg font-bold text-gray-800 text-center`}>
+      <View style={[tw`bg-purple-200 py-4`,{backgroundColor:"#6c63ff"}]}>
+        <Text style={[tw`text-lg font-bold text-gray-800 text-center`,
+          {
+            color:"#ffffff"
+          }]}>
           Fundraisers Screen
         </Text>
       </View>
@@ -97,14 +100,15 @@ const Fundraisers: React.FC<{ event: any }> = ({ event }) => {
       {/* Search Bar with Add Button */}
       <View style={tw`flex-row items-center p-4 bg-gray-200`}>
         <TextInput
-          style={tw`flex-1 border border-gray-400 rounded px-3 py-4 bg-white`}
+          style={[tw`flex-1 border border-gray-400 rounded px-3 py-4 bg-white`,{borderRadius:10}]}
           placeholder="Search fundraisers..."
-          placeholderTextColor="#888"
+          placeholderTextColor="#6c63ff"
           value={searchText}
           onChangeText={setSearchText}
+          
         />
         <TouchableOpacity
-          style={tw`bg-purple-600 p-3 ml-2 rounded-lg`}
+          style={[tw`bg-purple-600 p-3 ml-2 rounded-lg`,{backgroundColor:"#6c63ff"}]}
           onPress={() => setIsModalVisible(true)} // Open modal on button press
         >
           <MaterialIcons name="add" size={24} color="#fff" />
@@ -120,7 +124,7 @@ const Fundraisers: React.FC<{ event: any }> = ({ event }) => {
             style={tw`flex-row justify-between items-center bg-white p-4 rounded-lg mb-2 shadow`}
           >
             <View>
-              <Text style={tw`text-lg font-bold text-gray-800`}>{item.name}</Text>
+              <Text style={[tw`text-lg font-bold text-gray-800`,{color:"#6c63ff"}]}>{item.name}</Text>
             </View>
             <Text style={tw`text-gray-800 font-bold`}>₹{item.amount.toFixed(2)}</Text>
           </View>

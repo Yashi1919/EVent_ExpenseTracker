@@ -1,5 +1,13 @@
 import React from "react";
-import { View, Text, TextInput, Button, Alert, TouchableOpacity, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Alert,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+} from "react-native";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,7 +22,6 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function Login({ navigation }: any) {
   const {
-    register,
     handleSubmit,
     setValue,
     formState: { errors },
@@ -28,16 +35,23 @@ export default function Login({ navigation }: any) {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const storedUser = await AsyncStorage.getItem("user");
-      if (!storedUser) {
-        Alert.alert("Error", "No user found. Please sign up first.");
+      const storedUsers = await AsyncStorage.getItem("users");
+      if (!storedUsers) {
+        Alert.alert("Error", "No users found. Please sign up first.");
         return;
       }
 
-      const parsedUser = JSON.parse(storedUser);
-      if (parsedUser.username === data.username && parsedUser.password === data.password) {
+      const users = JSON.parse(storedUsers);
+
+      // Check if the user exists with matching username and password
+      const user = users.find(
+        (user: any) =>
+          user.username === data.username && user.password === data.password
+      );
+
+      if (user) {
         Alert.alert("Success", "Logged in successfully!");
-        navigation.replace("MainScreen"); // Replace the current stack
+        navigation.replace("MainScreen", { username: data.username }); // Pass username to MainScreen
       } else {
         Alert.alert("Error", "Invalid username or password.");
       }
@@ -49,14 +63,12 @@ export default function Login({ navigation }: any) {
   return (
     <View style={styles.container}>
       {/* Logo Section */}
-      <Image
-        source={require("../assets/logo.jpg")} // Replace with the path to your logo image
-        style={styles.logo}
-      />
+     
 
       {/* Login Card */}
       <View style={styles.card}>
         <Text style={styles.heading}>Login</Text>
+        <View style={styles.inputContainer}>
         <TextInput
           placeholder="Username"
           placeholderTextColor="#555"
@@ -66,7 +78,9 @@ export default function Login({ navigation }: any) {
         {errors.username && (
           <Text style={styles.error}>{errors.username.message}</Text>
         )}
+</View>
 
+<View style={styles.inputContainer}>
         <TextInput
           placeholder="Password"
           placeholderTextColor="#555"
@@ -77,12 +91,16 @@ export default function Login({ navigation }: any) {
         {errors.password && (
           <Text style={styles.error}>{errors.password.message}</Text>
         )}
+</View>
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.link} onPress={() => navigation.navigate("Signup")}>
+        <TouchableOpacity
+          style={styles.link}
+          onPress={() => navigation.navigate("Signup")}
+        >
           <Text style={styles.linkText}>Don’t have an account? Sign Up</Text>
         </TouchableOpacity>
       </View>
@@ -98,9 +116,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   logo: {
-    width: 150, // Adjust logo width
-    height: 150, // Adjust logo height
-    marginBottom: 40, // Space between the logo and the login card
+    width: 150,
+    height: 150,
+    marginBottom: 40,
   },
   card: {
     width: "80%",
@@ -118,16 +136,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
-    color: "#333",
+    color: "#6c63ff",
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
+    flex: 1,
+    marginLeft: 10,
     fontSize: 16,
-    color: "#333",
+    color: "#000",
   },
   error: {
     color: "red",
@@ -155,4 +170,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    marginBottom: 15,
+    width: "100%",
+    backgroundColor: "#f9f9f9",
+  }
 });

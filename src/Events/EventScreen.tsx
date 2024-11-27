@@ -79,7 +79,7 @@ const EventScreen: React.FC = () => {
 
           return <MaterialIcons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "purple",
+        tabBarActiveTintColor: "#6c63ff",
         tabBarInactiveTintColor: "gray",
         tabBarStyle: tw`bg-white border-t border-gray-200`,
         headerShown: false,

@@ -57,24 +57,24 @@ const History: React.FC<{ event: any }> = ({ event }) => {
   return (
     <View style={tw`flex-1 bg-gray-100`}>
       {/* Header */}
-      <View style={tw`bg-purple-200 py-4`}>
-        <Text style={tw`text-lg font-bold text-gray-800 text-center`}>
-          Event Details
+      <View style={[tw`bg-purple-200 py-4`,{backgroundColor:"#6c63ff"}]}>
+        <Text style={[tw`text-lg font-bold text-gray-800 text-center`,{color:"#ffffff"}]}>
+          History
         </Text>
       </View>
 
       {/* Content wrapped in ScrollView */}
       <ScrollView contentContainerStyle={tw`p-4`}>
         {/* Event Summary */}
-        <View style={[styles.summaryContainer, tw`p-4 mb-4 rounded-lg shadow`]}>
-          <Text style={tw`text-lg font-bold text-gray-800`}>
+        <View style={[styles.summaryContainer, tw`p-4 mb-4 rounded-lg shadow`,{backgroundColor:"#6c63ff"}]}>
+          <Text style={[tw`text-lg font-bold text-gray-800`,{color:"white"}]}>
             Name: {eventData.name}
           </Text>
-          <Text style={tw`text-gray-700`}>Date: {eventData.date}</Text>
-          <Text style={tw`text-gray-700`}>
+          <Text style={[tw`text-gray-700`,{color:"white"}]}>Date: {eventData.date}</Text>
+          <Text style={[tw`text-gray-700`,{color:"white"}]}>
             Total Amount: ₹{eventData.totalAmount.toFixed(2)}
           </Text>
-          <Text style={tw`text-gray-700`}>
+          <Text style={[tw`text-gray-700`,{color:"white"}]}>
             Expense Types: {eventData.expenseTypes.join(", ")}
           </Text>
         </View>

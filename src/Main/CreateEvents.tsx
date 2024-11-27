@@ -16,9 +16,12 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
 import tw from "twrnc";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 export default function CreateEvents() {
+  const route = useRoute();
+  const { username } = route.params; // Get the username from route params
+
   const [events, setEvents] = useState([]);
   const [expenseTypes, setExpenseTypes] = useState([]); // For expense types
   const [selectedDate, setSelectedDate] = useState(dayjs());
@@ -29,11 +32,14 @@ export default function CreateEvents() {
 
   const navigation = useNavigation(); // React Navigation hook
 
-  // Load events from AsyncStorage
+  // Load events for the current user from AsyncStorage
   const loadStorageData = async () => {
     try {
-      const storedEvents = await AsyncStorage.getItem("events");
-      if (storedEvents) setEvents(JSON.parse(storedEvents));
+      const userData = await AsyncStorage.getItem(username); // Fetch data using username
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        setEvents(parsedData.events || []); // Set events if they exist
+      }
     } catch (error) {
       console.error("Failed to load data from AsyncStorage", error);
     }
@@ -43,6 +49,49 @@ export default function CreateEvents() {
     loadStorageData();
   }, []);
 
+
+  
+
+  const handleEventClick = (event) => {
+    navigation.navigate("EventScreen", { event });
+  };
+
+  const handleLongPress = (event) => {
+    Alert.alert(
+      "Delete Event",
+      `Are you sure you want to delete "${event.name}"?`, // Use backticks for template literals
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: () => deleteEvent(event.id),
+          style: "destructive",
+        },
+      ]
+    );
+  };
+  
+  const deleteEvent = async (eventId) => {
+    const updatedEvents = events.filter((event) => event.id !== eventId);
+
+    try {
+      const userData = await AsyncStorage.getItem(username);
+      const parsedData = userData ? JSON.parse(userData) : { events: [] };
+      parsedData.events = updatedEvents;
+
+      await AsyncStorage.setItem(username, JSON.stringify(parsedData)); // Save updated events under username
+      setEvents(updatedEvents);
+      Alert.alert("Success", "Event deleted successfully.");
+    } catch (error) {
+      console.error("Failed to delete event from AsyncStorage", error);
+    }
+  };
+
+
+  
   // Add a new expense type to the current list
   const addExpenseType = () => {
     if (!newExpenseType.trim()) {
@@ -53,6 +102,13 @@ export default function CreateEvents() {
     setExpenseTypes(updatedExpenseTypes);
     setNewExpenseType("");
     Alert.alert("Success", "Expense type added.");
+  };
+
+  // Remove an expense type from the list
+  const removeExpenseType = (typeToRemove) => {
+    const updatedExpenseTypes = expenseTypes.filter((type) => type !== typeToRemove);
+    setExpenseTypes(updatedExpenseTypes);
+    Alert.alert("Success", "Expense type removed.");
   };
 
   // Save a new event
@@ -66,13 +122,17 @@ export default function CreateEvents() {
       id: Date.now(),
       name: eventName,
       expenseTypes,
-      date: selectedDate.format("YYYY-MM-DD"),
+      date: selectedDate,
     };
 
     const updatedEvents = [...events, newEvent];
 
     try {
-      await AsyncStorage.setItem("events", JSON.stringify(updatedEvents));
+      const userData = await AsyncStorage.getItem(username);
+      const parsedData = userData ? JSON.parse(userData) : { events: [] }; // Parse user data or initialize
+      parsedData.events = updatedEvents;
+
+      await AsyncStorage.setItem(username, JSON.stringify(parsedData)); // Save under username key
       setEvents(updatedEvents);
       resetEventForm();
       Alert.alert("Success", "Event added successfully!");
@@ -89,47 +149,12 @@ export default function CreateEvents() {
     setIsModalVisible(false);
   };
 
-  // Delete an event
-  const deleteEvent = async (eventId) => {
-    const updatedEvents = events.filter((event) => event.id !== eventId);
-
-    try {
-      await AsyncStorage.setItem("events", JSON.stringify(updatedEvents));
-      setEvents(updatedEvents);
-      Alert.alert("Success", "Event deleted successfully.");
-    } catch (error) {
-      console.error("Failed to delete event from AsyncStorage", error);
-    }
-  };
-
-  // Handle long press to delete event
-  const handleLongPress = (event) => {
-    Alert.alert(
-      "Delete Event",
-      `Are you sure you want to delete "${event.name}"?`,
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          onPress: () => deleteEvent(event.id),
-          style: "destructive",
-        },
-      ]
-    );
-  };
-
-  // Navigate to event screen
-  const handleEventClick = (event) => {
-    navigation.navigate("EventScreen", { event });
-  };
+  
 
   return (
     <View style={tw`flex-1 p-5 bg-gray-100`}>
-      <Text style={tw`text-2xl font-bold text-center mb-5 text-gray-800`}>
-        Create Events
+      <Text style={[tw`text-2xl font-bold text-center mb-5 text-gray-800`,{ color: "#6c63ff" },]}>
+        Your Events
       </Text>
 
       {/* Horizontal Scrollable Event List */}
@@ -143,37 +168,54 @@ export default function CreateEvents() {
             onPress={() => handleEventClick(item)}
             onLongPress={() => handleLongPress(item)} // Handle long press
             style={[
-              tw`p-4 bg-white rounded-lg shadow mr-4`,
-              { width: Dimensions.get("screen").width * 0.86 },
-              { height: Dimensions.get("screen").height * 0.5 },
+              tw`p-4 bg-white rounded-lg shadow mr-10`,
+              { width: Dimensions.get("screen").width * 0.87 },
+              { height: Dimensions.get("screen").height * 0.6 },
+              {borderRadius:15,backgroundColor: "#6c63ff" ,}
             ]}
           >
-            <Text style={tw`text-lg font-bold text-gray-800 mb-2`}>{item.name}</Text>
-            <Text style={tw`text-sm text-gray-600 mb-2`}>
-              Date: {dayjs(item.date).format("DD/MM/YYYY")}
+            <Text style={[tw`text-lg font-bold text-gray-800 mb-2`,{color:"#ffffff",textAlign:"center"}]}>Event:-{item.name}</Text>
+            
+            <View style={[tw`flex-1 bg-white justify-center items-center`,{borderRadius:15}]}>
+              <DateTimePicker
+              mode="single"
+             date={item.date}
+             selectedRangeBackgroundColor="#ffffff"
+            />
+            </View>
+            
+            
+            <Text style={[tw`text-sm font-semibold text-gray-800 mb-1`,{color:"#ffffff",fontSize:18,fontWeight:"bold",marginTop:15}]}>
+              Expense Types
             </Text>
-            <Text style={tw`text-sm font-semibold text-gray-800 mb-1`}>
-              Expense Types:
-            </Text>
-            {item.expenseTypes.length === 0 ? (
-              <Text style={tw`text-sm text-gray-600`}>No expense types added.</Text>
-            ) : (
-              item.expenseTypes.map((type, index) => (
-                <Text key={index} style={tw`text-sm text-gray-600`}>
-                  - {type}
-                </Text>
-              ))
-            )}
-          </TouchableOpacity>
+            <View style={tw`flex-row flex-wrap`}>
+  {item.expenseTypes.map((type, index) => (
+    <Text
+      key={index}
+      style={[tw`text-sm text-gray-600 mr-2`, { color: "#ffffff" }]}
+    >
+      {type}
+    </Text>
+  ))}
+</View>
+            </TouchableOpacity>
+          
         )}
       />
 
       {/* Floating Button */}
       <TouchableOpacity
-        style={tw`absolute bottom-5 right-5 bg-purple-600 w-14 h-14 rounded-full justify-center items-center shadow-lg`}
+        style={[tw`flex-1 bg-gray-100 justify-center items-center`,{marginBottom:14}]}
         onPress={() => setIsModalVisible(true)}
       >
-        <MaterialIcons name="add" size={28} color="#fff" />
+        <View
+    style={[
+      tw`w-18 h-18 rounded-full justify-center items-center shadow-lg`,
+      { backgroundColor: "#6c63ff" }, // Replace purple with #6c63ff
+    ]}
+  >
+    <MaterialIcons name="add" size={28} color="#fff" />
+  </View>
       </TouchableOpacity>
 
       {/* Modal for Adding Events */}
@@ -207,25 +249,35 @@ export default function CreateEvents() {
               style={tw`mb-3`}
             />
 
+            <TextInput
+              style={tw`border border-gray-300 rounded p-2 mb-3`}
+              placeholder="Add Expense Type"
+              placeholderTextColor="#000"
+              value={newExpenseType}
+              onChangeText={setNewExpenseType}
+            />
             <TouchableOpacity
-              style={tw`bg-purple-600 py-2 rounded-lg mb-2`}
-              onPress={() => setIsExpenseTypeModalVisible(true)}
+              style={tw`bg-green-600 py-2 rounded-lg mb-2`}
+              onPress={addExpenseType}
             >
-              <Text style={tw`text-center text-white font-bold`}>
-                Add Expense Types
-              </Text>
+              <Text style={tw`text-center text-white font-bold`}>Add Expense Type</Text>
             </TouchableOpacity>
 
             <FlatList
               data={expenseTypes}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
-                <Text style={tw`text-sm text-gray-700`}>- {item}</Text>
+                <View style={tw`flex-row justify-between items-center`}>
+                  <Text style={tw`text-sm text-gray-700`}>{item}</Text>
+                  <TouchableOpacity onPress={() => removeExpenseType(item)}>
+                    <MaterialIcons name="delete" size={20} color="red" />
+                  </TouchableOpacity>
+                </View>
               )}
             />
 
             <TouchableOpacity
-              style={tw`bg-green-600 py-2 rounded-lg mb-2`}
+              style={tw`bg-blue-600 py-2 rounded-lg mb-2`}
               onPress={saveEvent}
             >
               <Text style={tw`text-center text-white font-bold`}>Save Event</Text>
@@ -235,53 +287,6 @@ export default function CreateEvents() {
               onPress={() => resetEventForm()}
             >
               <Text style={tw`text-center text-white font-bold`}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
-
-      {/* Modal for Managing Expense Types */}
-      <Modal
-        visible={isExpenseTypeModalVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setIsExpenseTypeModalVisible(false)}
-      >
-        <KeyboardAvoidingView
-          style={tw`flex-1 justify-center items-center bg-black/50`}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-          <View style={tw`w-4/5 bg-white p-5 rounded-lg shadow-lg`}>
-            <Text style={tw`text-xl font-bold text-center mb-3 text-gray-800`}>
-              Manage Expense Types
-            </Text>
-            <TextInput
-              style={tw`border border-gray-300 rounded p-2 mb-3`}
-              placeholder="New Expense Type"
-              placeholderTextColor="#000"
-              value={newExpenseType}
-              onChangeText={setNewExpenseType}
-            />
-            <TouchableOpacity
-              style={tw`bg-green-600 py-2 rounded-lg mb-2`}
-              onPress={addExpenseType}
-            >
-              <Text style={tw`text-center text-white font-bold`}>Add Type</Text>
-            </TouchableOpacity>
-
-            <FlatList
-              data={expenseTypes}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <Text style={tw`text-sm text-gray-700`}>- {item}</Text>
-              )}
-            />
-
-            <TouchableOpacity
-              style={tw`bg-gray-600 py-2 rounded-lg`}
-              onPress={() => setIsExpenseTypeModalVisible(false)}
-            >
-              <Text style={tw`text-center text-white font-bold`}>Close</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
