@@ -6,6 +6,7 @@ import Signup from "./src/authentication/Signup";
 import MainScreen from "./src/Main/MainScreen";
 import EventScreen from "./src/Events/EventScreen";
 const Stack = createStackNavigator();
+import { Avatar } from "./starter-base/components/ui/avatar";
 
 export default function App() {
   return (

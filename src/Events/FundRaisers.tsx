@@ -121,7 +121,7 @@ const Fundraisers: React.FC<{ event: any }> = ({ event }) => {
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <View
-            style={tw`flex-row justify-between items-center bg-white p-4 rounded-lg mb-2 shadow`}
+            style={tw`flex-row justify-between items-center bg-white p-6 rounded-lg mb-2 shadow`}
           >
             <View>
               <Text style={[tw`text-lg font-bold text-gray-800`,{color:"#6c63ff"}]}>{item.name}</Text>

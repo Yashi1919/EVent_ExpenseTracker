@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {
+import { 
   View,
   Text,
   Alert,
@@ -40,7 +40,7 @@ const Expenses: React.FC<{ event: any }> = ({ event }) => {
 
         setEventData(updatedEventData);
       } else {
-        Alert.alert("Event not found", "Please wait while we fetch the details.");
+        Alert.alert("Event added Go Back and Come Again");
       }
     } catch (error) {
       console.error("Failed to load event data from AsyncStorage", error);

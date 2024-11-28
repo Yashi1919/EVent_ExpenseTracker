@@ -10,6 +10,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import tw from "twrnc";
+import { Image } from "react-native";
 
 const History: React.FC<{ event: any }> = ({ event }) => {
   const [eventData, setEventData] = useState<any>(null);
@@ -18,6 +19,7 @@ const History: React.FC<{ event: any }> = ({ event }) => {
   const loadEventData = async () => {
     try {
       const storedEvent = await AsyncStorage.getItem(event.name);
+      console.log(storedEvent)
       if (storedEvent) {
         const parsedEvent = JSON.parse(storedEvent);
 
@@ -108,6 +110,11 @@ const History: React.FC<{ event: any }> = ({ event }) => {
                 {item.message && (
                   <Text style={tw`text-gray-600`}>Message: {item.message}</Text>
                 )}
+              {item.photo?(
+                 <Image
+            source={{ uri: item.photo }}
+            style={[tw`w-32 h-32  border-2 border-purple-600`,{borderRadius:8}]}
+          />):<Text>No Proof Uploaded</Text>}
               </View>
             )}
             scrollEnabled={false} // Prevent FlatList from scrolling inside ScrollView
