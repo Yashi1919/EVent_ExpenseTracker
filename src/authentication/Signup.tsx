@@ -11,6 +11,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import tw from "twrnc";
+import { Button } from "../Variants/ButtonExample";
 
 const signupSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters." }),
@@ -91,12 +92,14 @@ export default function Signup({ navigation }: any) {
           </Text>
         )}
 
-        <TouchableOpacity
-          style={tw`bg-indigo-600 py-3 rounded-lg items-center mt-2`}
-          onPress={handleSubmit(onSubmit)}
-        >
-          <Text style={tw`text-white text-lg font-bold`}>Sign Up</Text>
-        </TouchableOpacity>
+     
+        <Button
+  intent="primary"
+  size="large"
+  gradientColors={["#ff7e5f", "#6c63ff"]}
+  label="Sign Up"
+  onPress={handleSubmit(onSubmit)}
+/>
 
         <TouchableOpacity
           style={tw`mt-4 items-center`}

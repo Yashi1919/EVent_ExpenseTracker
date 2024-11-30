@@ -11,6 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import tw from "twrnc";
 import { Image } from "react-native";
+import { GradientText } from "../Variants/TextCva";
 
 const History: React.FC<{ event: any }> = ({ event }) => {
   const [eventData, setEventData] = useState<any>(null);
@@ -58,15 +59,22 @@ const History: React.FC<{ event: any }> = ({ event }) => {
 
   return (
     <View style={tw`flex-1 bg-gray-100`}>
+      
       {/* Header */}
-      <View style={[tw`bg-[#6c63ff] py-4`]}>
-        <Text style={[tw`text-lg font-bold text-gray-800 text-center text=[#ffffff]`]}>
-          History
-        </Text>
+      <View style={tw` p-5 bg-gray-100`}>
+      <GradientText
+        fontSize={24}
+        fontWeight="bold"
+        colors={["#ff7e5f", "#6c63ff"]}
+        align="center"
+        width={300}
+      >
+        Fundraisers
+      </GradientText>
       </View>
 
       {/* Content wrapped in ScrollView */}
-      <ScrollView contentContainerStyle={tw`p-4`}>
+      <ScrollView contentContainerStyle={tw`p-8`}>
         {/* Event Summary */}
         <View style={[styles.summaryContainer, tw`p-4 mb-4 rounded-lg shadow bg-[#6c63ff]`]}>
           <Text style={[tw`text-lg font-bold text-gray-800 text-[#ffffff]`]}>

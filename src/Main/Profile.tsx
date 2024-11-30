@@ -4,7 +4,7 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
-  Alert,
+  
   Image,
   ScrollView,
 } from "react-native";
@@ -18,8 +18,12 @@ import AboutAppModal from "../Modals/AboutAppModal";
 import HelpModal from "../Modals/HelpModal";
 import PremiumModal from "../Modals/PremiumModal";
 import ContactUsModal from "../Modals/ContactUsModal";
+import { GradientText } from "../Variants/TextCva";
+import { Button } from "../Variants/ButtonExample";
+import { Alert,AlertDescription,AlertHeader } from "../Variants/AlertCva";
 
 export default function Profile() {
+  const [showAlert,setShowAlert]=useState(false)
   const route = useRoute();
   const navigation = useNavigation();
   const { username } = route.params; // Get the username from route params
@@ -67,7 +71,6 @@ export default function Profile() {
     try {
       const userData = { profileImage, userName, eventCount };
       await AsyncStorage.setItem(profileKey, JSON.stringify(userData));
-      Alert.alert("Success", "Profile updated successfully!");
     } catch (error) {
       console.error("Failed to save user data to AsyncStorage:", error);
     }
@@ -102,13 +105,30 @@ export default function Profile() {
     loadUserCount();
   });
 
-  return (
-    <ScrollView>
-      <View style={tw`flex-1 p-5 bg-gray-100`}>
-        <Text style={tw`text-2xl font-bold text-center mb-5 text-purple-600`}>
-          Profile
-        </Text>
+  const dismissAlert = () => {
+    setShowAlert(false); // Hide the alert
+    navigation.navigate("Login"); // Navigate to Login after dismissing the alert
+  };
 
+  const handleLogout = () => {
+    setShowAlert(true); // Show the custom alert
+  };
+
+  return (
+    <View>
+      
+    <ScrollView>
+    
+      <View style={tw`flex-1 p-5 bg-gray-100`}>
+      <GradientText
+        fontSize={24}
+        fontWeight="bold"
+        colors={["#ff7e5f", "#feb47b"]}
+        align="center"
+        width={300}
+      >
+        Profile
+      </GradientText>
         {/* Profile Image */}
         <View style={tw`flex-row justify-between items-center p-4 bg-gray-100 rounded-lg shadow-lg`}>
           <TextInput
@@ -134,12 +154,15 @@ export default function Profile() {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          style={tw`bg-green-600 py-2 rounded-lg mb-3`}
-          onPress={saveUserData}
-        >
-          <Text style={tw`text-center text-white font-bold`}>Save Profile</Text>
-        </TouchableOpacity>
+        <Button
+  label="Save Profile"
+  intent="primary"
+  size="medium"
+  gradientColors={["#38a169", "#2f855a"]} // Matching the green color gradient
+  onPress={saveUserData}
+   className="mt-2 text-white font-bold"
+/>
+
 
         <View style={tw`w-full bg-white p-4 rounded-lg shadow-lg mb-1 mt-1`}>
           <Text style={tw`text-lg font-semibold text-gray-700`}>
@@ -171,20 +194,22 @@ export default function Profile() {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={tw`bg-red-500 py-2 rounded-lg mt-2`}
-          onPress={() => {
-            navigation.navigate("Login");
-            Alert.alert("Logged Out", "You have been logged out successfully.");
-          }}
-        >
-          <Text style={tw`text-center text-white font-bold`}>Logout</Text>
-        </TouchableOpacity>
+        <Button
+  label="Logout"
+  intent="primary"
+  size="medium"
+  gradientColors={["#f56565", "#c53030"]} // Red gradient background
+  onPress={handleLogout}
+  className="mt-2 text-white font-bold" // Adds margin-top and ensures bold, white text
+/>
+
+
       </View>
       <AboutAppModal isVisible={aboutVisible} onClose={() => setAboutVisible(false)} />
       <PremiumModal isVisible={premiumVisible} onClose={() => setPremiumVisible(false)} />
       <ContactUsModal isVisible={contactVisible} onClose={() => setContactVisible(false)} />
       <HelpModal isVisible={helpVisible} onClose={() => setHelpVisible(false)} />
     </ScrollView>
+    </View>
   );
 }

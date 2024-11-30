@@ -11,6 +11,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import tw from "twrnc";//tailwind React native classes 
+import { GradientText } from "../Variants/TextCva";
 
 import { z } from "zod"; 
 
@@ -110,11 +111,16 @@ const Fundraisers: React.FC<{ event: any }> = ({ event }) => {
   return (
     <View style={tw`flex-1 bg-gray-100`}>
       {/* Header */}
-      <View style={[tw`bg-[#6c63ff] py-4`,]}>
-        <Text style={[tw`text-lg font-bold text-gray-800 text-center text-white`,
-          ]}>
-          Fundraisers Screen
-        </Text>
+      <View style={tw` p-5 bg-gray-100`}>
+      <GradientText
+        fontSize={24}
+        fontWeight="bold"
+        colors={["#ff7e5f", "#6c63ff"]}
+        align="center"
+        width={300}
+      >
+        Fundraisers
+      </GradientText>
       </View>
 
       {/* Search Bar with Add Button */}

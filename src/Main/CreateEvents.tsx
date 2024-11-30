@@ -18,6 +18,8 @@ import dayjs from "dayjs";
 import tw from "twrnc";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { z } from "zod";
+import { Button } from "../Variants/RoundedBtn";
+import { GradientText } from "../Variants/TextCva";
 
 const eventSchema = z.object({
   eventName: z.string().min(1, "Event name is required"),
@@ -172,9 +174,16 @@ export default function CreateEvents() {
 
   return (
     <View style={tw`flex-1 p-5 bg-gray-100`}>
-      <Text style={[tw`text-2xl font-bold text-center mb-5 text-gray-800`,{ color: "#6c63ff" },]}>
+      <GradientText
+        fontSize={24}
+        fontWeight="bold"
+        colors={["#ff7e5f", "#6c63ff"]}
+        align="center"
+        width={300}
+      >
         Your Events
-      </Text>
+      </GradientText>
+
 
       {/* Horizontal Scrollable Event List */}
       <FlatList
@@ -223,19 +232,19 @@ export default function CreateEvents() {
       />
 
       {/* Floating Button */}
-      <TouchableOpacity
-        style={[tw`flex-1 bg-gray-100 justify-center items-center`,{marginBottom:14}]}
-        onPress={() => setIsModalVisible(true)}
-      >
-        <View
-    style={[
-      tw`w-18 h-18 rounded-full justify-center items-center shadow-lg`,
-      { backgroundColor: "#6c63ff" }, // Replace purple with #6c63ff
-    ]}
-  >
-    <MaterialIcons name="add" size={28} color="#fff" />
-  </View>
-      </TouchableOpacity>
+      <Button
+  intent="primary"
+  size="rounded"
+  gradientColors={["#6c63ff", "#4c669f"]}
+  onPress={() => setIsModalVisible(true)}
+  label={<MaterialIcons name="add" size={28} color="#fff" />} // Using the MaterialIcons component as the label
+  className="shadow-lg"
+  style={{
+    marginBottom: 14, // Adding the marginBottom from the original code
+    alignItems:"center"
+  }}
+/>
+
 
       {/* Modal for Adding Events */}
       <Modal

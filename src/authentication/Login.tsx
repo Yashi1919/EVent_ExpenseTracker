@@ -12,6 +12,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import tw from "twrnc";
+import { Button } from "../Variants/ButtonExample";
+import { Input } from "../Variants/InputCva";
 
 const loginSchema = z.object({
   username: z.string().nonempty({ message: "Username is required." }),
@@ -62,41 +64,52 @@ export default function Login({ navigation }: any) {
 
   return (
     <View style={tw`flex-1 justify-center items-center bg-white`}>
-      {/* Login Card */}
+    
+
       <View style={tw`w-4/5 bg-white rounded-lg p-5 shadow-lg`}>
-        <Text style={tw`text-center text-xl font-bold mb-5 text-indigo-600`}>Login</Text>
+      <Text style={tw`text-2xl font-bold text-center mb-5 text-indigo-600`}>
+          Login
+        </Text>
 
         <View style={tw`flex-row items-center border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 mb-4`}>
-          <TextInput
-            placeholder="Username"
-            placeholderTextColor="#555"
-            style={tw`flex-1 text-base text-black`}
-            onChangeText={(text) => setValue("username", text)}
-          />
+        <Input
+  placeholder="Enter your username"
+  placeholderTextColor="#6c63ff"
+  intent="default"
+  theme="dark"
+  onChangeText={(text) => setValue("username", text)}
+  style={{color:"#000000"}}
+/>
+
+
         </View>
         {errors.username && (
           <Text style={tw`text-red-500 text-sm mb-2`}>{errors.username.message}</Text>
         )}
 
         <View style={tw`flex-row items-center border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 mb-4`}>
-          <TextInput
-            placeholder="Password"
-            placeholderTextColor="#555"
-            secureTextEntry
-            style={tw`flex-1 text-base text-black`}
-            onChangeText={(text) => setValue("password", text)}
-          />
+        <Input
+  placeholder="Enter your password"
+  placeholderTextColor="#6c63ff"
+  intent="default"
+  theme="dark"
+  onChangeText={(text) => setValue("password", text)}
+  style={{color:"#000000"}}
+/>
         </View>
         {errors.password && (
           <Text style={tw`text-red-500 text-sm mb-2`}>{errors.password.message}</Text>
         )}
 
-        <TouchableOpacity
-          style={tw`bg-indigo-600 py-3 rounded-lg items-center mt-2`}
-          onPress={handleSubmit(onSubmit)}
-        >
-          <Text style={tw`text-white text-base font-bold`}>Login</Text>
-        </TouchableOpacity>
+        
+          <Button
+  intent="primary"
+  size="large"
+  gradientColors={["#ff7e5f", "#6c63ff"]}
+  label="Login"
+  onPress={handleSubmit(onSubmit)}
+  
+/>
 
         <TouchableOpacity
           style={tw`mt-4 items-center`}

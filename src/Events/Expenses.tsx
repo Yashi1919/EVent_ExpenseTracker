@@ -15,6 +15,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import tw from "twrnc";
 import ImagePicker from "react-native-image-crop-picker";
 import { z } from "zod";
+import { GradientText } from "../Variants/TextCva";
 
 const expenseSchema = z.object({
   selectedExpenseType: z.string().nonempty("Expense type is required."),
@@ -161,12 +162,18 @@ const Expenses: React.FC<{ event: any }> = ({ event }) => {
 
   return (
     <View style={tw`flex-1 bg-gray-100`}>
-       <View style={[tw`bg-[#6c63ff] py-4`]}>
-        <Text style={[tw`text-lg font-bold text-gray-800 text-center text-white`,
-         ]}>
-          Expenses
-        </Text>
-      </View>
+      <View style={tw`flex-1 p-5 bg-gray-100`}>
+      <GradientText
+        fontSize={24}
+        fontWeight="bold"
+        colors={["#ff7e5f", "#6c63ff"]}
+        align="center"
+        width={300}
+      >
+        Your Events
+      </GradientText>
+      
+    
       {/* Event Name and Total Amount */}
       <View
         style={[
@@ -180,7 +187,7 @@ const Expenses: React.FC<{ event: any }> = ({ event }) => {
           Total Amount: {eventData.totalAmount.toFixed(2)} rs
         </Text>
       </View>
-
+      </View>
       {/* Floating Add Button */}
       <TouchableOpacity
         style={tw`absolute rounded-full items-center justify-center shadow-lg bg-[#6c63ff] self-center w-[150px] h-[150px] bottom-[180px]`}
