@@ -59,8 +59,8 @@ const History: React.FC<{ event: any }> = ({ event }) => {
   return (
     <View style={tw`flex-1 bg-gray-100`}>
       {/* Header */}
-      <View style={[tw`bg-purple-200 py-4`,{backgroundColor:"#6c63ff"}]}>
-        <Text style={[tw`text-lg font-bold text-gray-800 text-center`,{color:"#ffffff"}]}>
+      <View style={[tw`bg-[#6c63ff] py-4`]}>
+        <Text style={[tw`text-lg font-bold text-gray-800 text-center text=[#ffffff]`]}>
           History
         </Text>
       </View>
@@ -68,15 +68,15 @@ const History: React.FC<{ event: any }> = ({ event }) => {
       {/* Content wrapped in ScrollView */}
       <ScrollView contentContainerStyle={tw`p-4`}>
         {/* Event Summary */}
-        <View style={[styles.summaryContainer, tw`p-4 mb-4 rounded-lg shadow`,{backgroundColor:"#6c63ff"}]}>
-          <Text style={[tw`text-lg font-bold text-gray-800`,{color:"white"}]}>
+        <View style={[styles.summaryContainer, tw`p-4 mb-4 rounded-lg shadow bg-[#6c63ff]`]}>
+          <Text style={[tw`text-lg font-bold text-gray-800 text-[#ffffff]`]}>
             Name: {eventData.name}
           </Text>
-          <Text style={[tw`text-gray-700`,{color:"white"}]}>Date: {eventData.date}</Text>
-          <Text style={[tw`text-gray-700`,{color:"white"}]}>
+          <Text style={[tw`text-gray-700 text-[#ffffff]`]}>Date: {eventData.date}</Text>
+          <Text style={[tw`text-gray-700 text-[#ffffff]`]}>
             Total Amount: ₹{eventData.totalAmount.toFixed(2)}
           </Text>
-          <Text style={[tw`text-gray-700`,{color:"white"}]}>
+          <Text style={[tw`text-[#ffffff]`]}>
             Expense Types: {eventData.expenseTypes.join(", ")}
           </Text>
         </View>
@@ -113,7 +113,7 @@ const History: React.FC<{ event: any }> = ({ event }) => {
               {item.photo?(
                  <Image
             source={{ uri: item.photo }}
-            style={[tw`w-32 h-32  border-2 border-purple-600`,{borderRadius:8}]}
+            style={[tw`w-32 h-32  border-2 border-purple-600 rounded-[4]`]}
           />):<Text>No Proof Uploaded</Text>}
               </View>
             )}

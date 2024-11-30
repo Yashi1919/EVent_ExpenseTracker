@@ -10,7 +10,18 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import tw from "twrnc";
+import tw from "twrnc";//tailwind React native classes 
+
+import { z } from "zod"; 
+
+const fundraiserSchema = z.object({
+  fundraiserName: z.string().min(1, "Fundraiser name is required."),
+  amount: z
+    .string()
+    .nonempty("Amount is required.")
+    .regex(/^\d+(\.\d{1,2})?$/, "Amount must be a valid number."),
+});
+
 
 const Fundraisers: React.FC<{ event: any }> = ({ event }) => {
   const [searchText, setSearchText] = useState("");
@@ -37,10 +48,21 @@ const Fundraisers: React.FC<{ event: any }> = ({ event }) => {
   };
 
   const handleAddFundraiser = async () => {
-    if (!fundraiserName.trim() || !amount || isNaN(Number(amount))) {
-      Alert.alert("Error", "Please provide valid fundraiser details.");
+
+    const validationResult = fundraiserSchema.safeParse({
+      fundraiserName,
+      amount,
+    });
+
+    if (!validationResult.success) {
+      const errorMessages = validationResult.error.errors
+        .map((err) => err.message)
+        .join("\n");
+      Alert.alert("Validation Error", errorMessages);
       return;
     }
+
+  
 
     const newFundraiser = {
       name: fundraiserName,
@@ -88,11 +110,9 @@ const Fundraisers: React.FC<{ event: any }> = ({ event }) => {
   return (
     <View style={tw`flex-1 bg-gray-100`}>
       {/* Header */}
-      <View style={[tw`bg-purple-200 py-4`,{backgroundColor:"#6c63ff"}]}>
-        <Text style={[tw`text-lg font-bold text-gray-800 text-center`,
-          {
-            color:"#ffffff"
-          }]}>
+      <View style={[tw`bg-[#6c63ff] py-4`,]}>
+        <Text style={[tw`text-lg font-bold text-gray-800 text-center text-white`,
+          ]}>
           Fundraisers Screen
         </Text>
       </View>
@@ -100,7 +120,7 @@ const Fundraisers: React.FC<{ event: any }> = ({ event }) => {
       {/* Search Bar with Add Button */}
       <View style={tw`flex-row items-center p-4 bg-gray-200`}>
         <TextInput
-          style={[tw`flex-1 border border-gray-400 rounded px-3 py-4 bg-white`,{borderRadius:10}]}
+          style={[tw`flex-1 border border-gray-400 rounded px-3 py-4 bg-white rounded-lg`]}
           placeholder="Search fundraisers..."
           placeholderTextColor="#6c63ff"
           value={searchText}
@@ -108,7 +128,7 @@ const Fundraisers: React.FC<{ event: any }> = ({ event }) => {
           
         />
         <TouchableOpacity
-          style={[tw`bg-purple-600 p-3 ml-2 rounded-lg`,{backgroundColor:"#6c63ff"}]}
+          style={[tw`bg-[#6c63ff] p-3 ml-2 rounded-lg`]}
           onPress={() => setIsModalVisible(true)} // Open modal on button press
         >
           <MaterialIcons name="add" size={24} color="#fff" />
@@ -124,7 +144,7 @@ const Fundraisers: React.FC<{ event: any }> = ({ event }) => {
             style={tw`flex-row justify-between items-center bg-white p-6 rounded-lg mb-2 shadow`}
           >
             <View>
-              <Text style={[tw`text-lg font-bold text-gray-800`,{color:"#6c63ff"}]}>{item.name}</Text>
+              <Text style={[tw`text-lg font-bold text-gray-800 text-[#6c63ff]`]}>{item.name}</Text>
             </View>
             <Text style={tw`text-gray-800 font-bold`}>₹{item.amount.toFixed(2)}</Text>
           </View>

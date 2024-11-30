@@ -17,6 +17,14 @@ import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
 import tw from "twrnc";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { z } from "zod";
+
+const eventSchema = z.object({
+  eventName: z.string().min(1, "Event name is required"),
+  expenseTypes: z.array(z.string()).min(3, "At least one expense type is required"),
+  selectedDate: z.date().refine((date) => date >= new Date(), "Selected date must be in the future"),
+});
+
 
 export default function CreateEvents() {
   const route = useRoute();
@@ -113,8 +121,19 @@ export default function CreateEvents() {
 
   // Save a new event
   const saveEvent = async () => {
-    if (!eventName.trim() || expenseTypes.length === 0 || !selectedDate) {
-      Alert.alert("Error", "Please provide all required fields.");
+    // Validate using zod
+    const validationResult = eventSchema.safeParse({
+      eventName,
+      expenseTypes,
+      selectedDate,
+    });
+
+    if (!validationResult.success) {
+      // Show error messages
+      const errorMessages = validationResult.error.errors
+        .map((err) => err.message)
+        .join("\n");
+      Alert.alert("Validation Error", errorMessages);
       return;
     }
 
@@ -242,12 +261,13 @@ export default function CreateEvents() {
               onChangeText={setEventName}
             />
 
-            <DateTimePicker
-              mode="single"
-              date={selectedDate}
-              onChange={(params) => setSelectedDate(params.date)}
-              style={tw`mb-3`}
-            />
+<DateTimePicker
+  mode="single"
+  date={selectedDate}
+  onChange={(params) => setSelectedDate(new Date(params.date))} // Convert to Date
+  style={tw`mb-3`}
+/>
+
 
             <TextInput
               style={tw`border border-gray-300 rounded p-2 mb-3`}

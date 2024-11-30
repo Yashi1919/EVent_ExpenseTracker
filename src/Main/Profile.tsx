@@ -35,29 +35,27 @@ export default function Profile() {
   const [contactVisible, setContactVisible] = useState(false);
   const [helpVisible, setHelpVisible] = useState(false);
 
- const loadUserCount=async ()=>{
-  try{
-    const countData=await AsyncStorage.getItem(username)
-    if(countData){
-     const data=JSON.parse(countData)
-     console.log(data["events"].length)
-     setEventCount(data["events"].length)  
+  const loadUserCount = async () => {
+    try {
+      const countData = await AsyncStorage.getItem(username);
+      if (countData) {
+        const data = JSON.parse(countData);
+        console.log(data["events"].length);
+        setEventCount(data["events"].length);
+      }
+    } catch (error) {
+      console.error("Failed to load user data from AsyncStorage:", error);
     }
-  }
-  catch (error) {
-    console.error("Failed to load user data from AsyncStorage:", error);
-  }
- }
- 
+  };
+
   // Load user data from AsyncStorage
   const loadUserData = async () => {
     try {
       const storedData = await AsyncStorage.getItem(profileKey);
       if (storedData) {
-        const { profileImage, userName, eventCount } = JSON.parse(storedData);
+        const { profileImage, userName } = JSON.parse(storedData);
         setProfileImage(profileImage || null);
         setUserName(userName || "");
-        
       }
     } catch (error) {
       console.error("Failed to load user data from AsyncStorage:", error);
@@ -99,111 +97,94 @@ export default function Profile() {
     loadUserCount();
   }, []);
 
-  useFocusEffect(()=>{
+  useFocusEffect(() => {
     loadUserData();
     loadUserCount();
-  })
+  });
 
   return (
     <ScrollView>
-    <View style={tw`flex-1 p-5 bg-gray-100`}>
-      <Text style={[tw`text-2xl font-bold text-center mb-5 text-gray-800`,{color:"#6c63ff"}]}>
-        Profile
-      </Text>
+      <View style={tw`flex-1 p-5 bg-gray-100`}>
+        <Text style={tw`text-2xl font-bold text-center mb-5 text-purple-600`}>
+          Profile
+        </Text>
 
-      {/* Profile Image */}
-      <View style={[tw`flex-row justify-between items-center p-4 bg-gray-100 rounded-lg shadow-lg`]}>
-      <TextInput
-        style={[tw`rounded p-2 mb-3`,{fontWeight:"bold",fontSize:23,color:"#6c63ff"}]}
-        placeholder="Enter your name"
-        placeholderTextColor="#6c63ff"
-        value={userName}
-        onChangeText={setUserName}
-      />
-      <TouchableOpacity onPress={handleImageUpload} style={tw`items-center mb-5`}>
-        {profileImage ? (
-          <Image
-            source={{ uri: profileImage }}
-            style={[tw`w-32 h-32  border-2 border-purple-600`,{borderRadius:8}]}
+        {/* Profile Image */}
+        <View style={tw`flex-row justify-between items-center p-4 bg-gray-100 rounded-lg shadow-lg`}>
+          <TextInput
+            style={tw`rounded p-2 mb-3 font-bold text-2xl text-purple-600`}
+            placeholder="Enter your name"
+            placeholderTextColor="#6c63ff"
+            value={userName}
+            onChangeText={setUserName}
           />
-        ) : (
-          <View
-            style={tw`w-32 h-32 rounded-full bg-gray-300 items-center justify-center border-2 border-purple-600`}
-          >
-            <MaterialIcons name="person" size={48} color="#6b7280" />
+          <TouchableOpacity onPress={handleImageUpload} style={tw`items-center mb-5`}>
+            {profileImage ? (
+              <Image
+                source={{ uri: profileImage }}
+                style={tw`w-32 h-32 border-2 border-purple-600 rounded-lg`}
+              />
+            ) : (
+              <View
+                style={tw`w-32 h-32 rounded-full bg-gray-300 items-center justify-center border-2 border-purple-600`}
+              >
+                <MaterialIcons name="person" size={48} color="#6b7280" />
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity
+          style={tw`bg-green-600 py-2 rounded-lg mb-3`}
+          onPress={saveUserData}
+        >
+          <Text style={tw`text-center text-white font-bold`}>Save Profile</Text>
+        </TouchableOpacity>
+
+        <View style={tw`w-full bg-white p-4 rounded-lg shadow-lg mb-1 mt-1`}>
+          <Text style={tw`text-lg font-semibold text-gray-700`}>
+            Total Events Created: {eventCount}
+          </Text>
+        </View>
+
+        <TouchableOpacity onPress={() => setAboutVisible(true)}>
+          <View style={tw`w-full bg-white p-4 rounded-lg shadow-lg mt-2`}>
+            <Text style={tw`text-lg font-semibold text-gray-700`}>About App</Text>
           </View>
-        )}
-        
-      </TouchableOpacity>
+        </TouchableOpacity>
 
-      
+        <TouchableOpacity onPress={() => setPremiumVisible(true)}>
+          <View style={tw`w-full bg-white p-4 rounded-lg shadow-lg mt-2`}>
+            <Text style={tw`text-lg font-semibold text-gray-700`}>Premium</Text>
+          </View>
+        </TouchableOpacity>
 
-</View>
-<TouchableOpacity
-        style={tw`bg-green-600 py-2 rounded-lg mb-3`}
-        onPress={saveUserData}
-      >
-        <Text style={tw`text-center text-white font-bold`}>Save Profile</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => setContactVisible(true)}>
+          <View style={tw`w-full bg-white p-4 rounded-lg shadow-lg mt-2`}>
+            <Text style={tw`text-lg font-semibold text-gray-700`}>Contact Us</Text>
+          </View>
+        </TouchableOpacity>
 
+        <TouchableOpacity onPress={() => setHelpVisible(true)}>
+          <View style={tw`w-full bg-white p-4 rounded-lg shadow-lg mt-2`}>
+            <Text style={tw`text-lg font-semibold text-gray-700`}>Help</Text>
+          </View>
+        </TouchableOpacity>
 
-      <View style={[tw`w-full bg-white p-4 rounded-lg shadow-lg mb-1`,{marginTop:1}]}>
-  <Text style={tw`text-lg font-semibold text-gray-700`}>
-    Total Events Created: {eventCount}
-  </Text>
-</View>
-
-<TouchableOpacity onPress={() => setAboutVisible(true)}>
-<View style={[tw`w-full bg-white p-4 rounded-lg shadow-lg mb-1`,{marginTop:5}]}>
-  <Text style={tw`text-lg font-semibold text-gray-700`}>
-    About App
-  </Text>
-</View>
-</TouchableOpacity>
-
-<TouchableOpacity onPress={() => setPremiumVisible(true)}>
-<View style={[tw`w-full bg-white p-4 rounded-lg shadow-lg mb-1`,{marginTop:5}]}>
-  <Text style={tw`text-lg font-semibold text-gray-700`}>
-    Premium
-  </Text>
-</View>
-</TouchableOpacity>
-
-<TouchableOpacity onPress={() => setContactVisible(true)}>
-<View style={[tw`w-full bg-white p-4 rounded-lg shadow-lg mb-1`,{marginTop:5}]}>
-  <Text style={tw`text-lg font-semibold text-gray-700`}>
-    Contact Us
-  </Text>
-</View>
-</TouchableOpacity>
-
-
-<TouchableOpacity onPress={() => setHelpVisible(true)}>
-<View style={[tw`w-full bg-white p-4 rounded-lg shadow-lg mb-1`,{marginTop:5}]}>
-  <Text style={tw`text-lg font-semibold text-gray-700`}>
-    Help
-  </Text>
-</View>
-</TouchableOpacity>
-      {/* Save Button */}
-      
-
-      {/* Logout Button */}
-      <TouchableOpacity
-        style={tw`bg-red-500 py-2 rounded-lg`}
-        onPress={() => {
-          navigation.navigate("Login");
-          Alert.alert("Logged Out", "You have been logged out successfully.");
-        }}
-      >
-        <Text style={tw`text-center text-white font-bold`}>Logout</Text>
-      </TouchableOpacity>
-    </View>
-    <AboutAppModal isVisible={aboutVisible} onClose={() => setAboutVisible(false)} />
-    <PremiumModal isVisible={premiumVisible} onClose={() => setPremiumVisible(false)} />
+        <TouchableOpacity
+          style={tw`bg-red-500 py-2 rounded-lg mt-2`}
+          onPress={() => {
+            navigation.navigate("Login");
+            Alert.alert("Logged Out", "You have been logged out successfully.");
+          }}
+        >
+          <Text style={tw`text-center text-white font-bold`}>Logout</Text>
+        </TouchableOpacity>
+      </View>
+      <AboutAppModal isVisible={aboutVisible} onClose={() => setAboutVisible(false)} />
+      <PremiumModal isVisible={premiumVisible} onClose={() => setPremiumVisible(false)} />
       <ContactUsModal isVisible={contactVisible} onClose={() => setContactVisible(false)} />
       <HelpModal isVisible={helpVisible} onClose={() => setHelpVisible(false)} />
-
     </ScrollView>
   );
 }

@@ -14,6 +14,18 @@ import { useFocusEffect } from "@react-navigation/native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import tw from "twrnc";
 import ImagePicker from "react-native-image-crop-picker";
+import { z } from "zod";
+
+const expenseSchema = z.object({
+  selectedExpenseType: z.string().nonempty("Expense type is required."),
+  amount: z
+    .string()
+    .nonempty("Amount is required.")
+    .regex(/^\d+(\.\d{1,2})?$/, "Amount must be a valid number."),
+  message: z.string().optional(),
+  photo: z.string().nullable().optional(),
+});
+
 
 const Expenses: React.FC<{ event: any }> = ({ event }) => {
   const [eventData, setEventData] = useState<any>(null);
@@ -56,6 +68,23 @@ const Expenses: React.FC<{ event: any }> = ({ event }) => {
   );
 
   const handleSaveToHistory = async () => {
+    try {
+      const validationResult = expenseSchema.safeParse({
+        selectedExpenseType,
+        amount,
+        message,
+        photo,
+      });
+  
+      if (!validationResult.success) {
+        const errorMessages = validationResult.error.errors
+          .map((err) => err.message)
+          .join("\n");
+        Alert.alert( errorMessages);
+        return;
+      }
+  
+
     if (!selectedExpenseType || !amount || isNaN(Number(amount))) {
       Alert.alert("Error", "Please provide valid expense details.");
       return;
@@ -85,7 +114,7 @@ const Expenses: React.FC<{ event: any }> = ({ event }) => {
       totalAmount: updatedTotalAmount,
     };
 
-    try {
+    
       await AsyncStorage.setItem(event.name, JSON.stringify(updatedEventData));
       setEventData(updatedEventData);
       setIsModalVisible(false);
@@ -99,6 +128,13 @@ const Expenses: React.FC<{ event: any }> = ({ event }) => {
       Alert.alert("Error", "Failed to save expense to history.");
     }
   };
+
+
+
+
+
+
+
 
   const handleImagePick = () => {
     ImagePicker.openPicker({
@@ -125,41 +161,30 @@ const Expenses: React.FC<{ event: any }> = ({ event }) => {
 
   return (
     <View style={tw`flex-1 bg-gray-100`}>
-       <View style={[tw`bg-purple-200 py-4`,{backgroundColor:"#6c63ff"}]}>
-        <Text style={[tw`text-lg font-bold text-gray-800 text-center`,
-          {
-            color:"#ffffff"
-          }]}>
+       <View style={[tw`bg-[#6c63ff] py-4`]}>
+        <Text style={[tw`text-lg font-bold text-gray-800 text-center text-white`,
+         ]}>
           Expenses
         </Text>
       </View>
       {/* Event Name and Total Amount */}
       <View
         style={[
-          tw`mb-5 bg-purple-200 rounded-lg p-4 shadow items-center justify-center`,
-          { width: "90%", height: "25%", alignSelf: "center", marginTop: 20,backgroundColor:"#6c63ff" },
+          tw`mb-5 bg-[#6c63ff] rounded-lg p-4 shadow items-center justify-center w-11/12 h-1/4 self-center mt-5`,
         ]}
       >
-        <Text style={[tw`text-xl font-bold text-gray-800 text-center`,{color:"#ffffff"}]}>
+        <Text style={[tw`text-xl font-bold text-white text-center mb-2`,{color:"#ffffff"}]}>
           {eventData.name}
         </Text>
-        <Text style={[tw`text-xl font-bold text-gray-800 text-center`,{color:"#ffffff"}]}>
+        <Text style={tw`text-lg font-semibold text-white`}>
           Total Amount: {eventData.totalAmount.toFixed(2)} rs
         </Text>
       </View>
 
       {/* Floating Add Button */}
       <TouchableOpacity
-        style={[
-          tw`absolute rounded-full items-center justify-center shadow-lg`,
-          {
-            width: 150,
-            height: 150,
-            bottom: 180,
-            backgroundColor:"#6c63ff",
-            alignSelf:"center"
-          },
-        ]}
+        style={tw`absolute rounded-full items-center justify-center shadow-lg bg-[#6c63ff] self-center w-[150px] h-[150px] bottom-[180px]`}
+
         onLongPress={() => setIsModalVisible(true)} // Open modal on long press
       >
         <MaterialIcons name="add" size={28} color="#fff" />

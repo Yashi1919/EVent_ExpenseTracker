@@ -17,7 +17,7 @@ const AboutAppModal = ({ isVisible, onClose }) => {
       onRequestClose={onClose}
     >
       <View style={styles.modalOverlay}>
-        <View style={[tw`bg-white p-6 rounded-lg`, { width: "90%" }]}>
+        <View style={[tw`bg-white p-6 rounded-lg  width-[90%]`]}>
           <Text style={tw`text-lg font-bold text-center mb-4`}>About Event Expense Tracker</Text>
           <Text style={tw`text-gray-600 mb-4 text-center`}>
             The Event Expense Tracker app is designed to help you effortlessly manage the finances of your events. Whether it's a personal celebration, corporate event, or fundraising campaign, this app allows you to:

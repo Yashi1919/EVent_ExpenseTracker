@@ -5,13 +5,12 @@ import {
   TextInput,
   Alert,
   TouchableOpacity,
-  StyleSheet,
-  Image,
 } from "react-native";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import tw from "twrnc";
 
 const signupSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters." }),
@@ -56,118 +55,58 @@ export default function Signup({ navigation }: any) {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Logo Section */}
-     
-
+    <View style={tw`flex-1 justify-center items-center bg-white`}>
       {/* Signup Form */}
-      <View style={styles.card}>
-        <Text style={styles.heading}>Signup</Text>
-        <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Username"
-          placeholderTextColor="#555"
-          style={styles.input}
-          onChangeText={(text) => setValue("username", text)}
-        />
-        {errors.username && <Text style={styles.error}>{errors.username.message}</Text>}
+      <View style={tw`w-4/5 bg-white rounded-lg p-5 shadow-lg`}>
+        <Text style={tw`text-2xl font-bold text-center mb-5 text-indigo-600`}>
+          Signup
+        </Text>
+
+        <View style={tw`flex-row items-center border border-gray-300 rounded-lg px-3 py-2 mb-4 bg-gray-100`}>
+          <TextInput
+            placeholder="Username"
+            placeholderTextColor="#555"
+            style={tw`flex-1 text-base text-black`}
+            onChangeText={(text) => setValue("username", text)}
+          />
         </View>
+        {errors.username && (
+          <Text style={tw`text-red-500 text-sm mb-2`}>
+            {errors.username.message}
+          </Text>
+        )}
 
-        <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Password"
-          placeholderTextColor="#555"
-          secureTextEntry
-          style={styles.input}
-          onChangeText={(text) => setValue("password", text)}
-        />
-        {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
-    </View>
+        <View style={tw`flex-row items-center border border-gray-300 rounded-lg px-3 py-2 mb-4 bg-gray-100`}>
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor="#555"
+            secureTextEntry
+            style={tw`flex-1 text-base text-black`}
+            onChangeText={(text) => setValue("password", text)}
+          />
+        </View>
+        {errors.password && (
+          <Text style={tw`text-red-500 text-sm mb-2`}>
+            {errors.password.message}
+          </Text>
+        )}
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
-          <Text style={styles.buttonText}>Sign Up</Text>
+        <TouchableOpacity
+          style={tw`bg-indigo-600 py-3 rounded-lg items-center mt-2`}
+          onPress={handleSubmit(onSubmit)}
+        >
+          <Text style={tw`text-white text-lg font-bold`}>Sign Up</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.link} onPress={() => navigation.navigate("Login")}>
-          <Text style={styles.linkText}>Already have an account? Login</Text>
+        <TouchableOpacity
+          style={tw`mt-4 items-center`}
+          onPress={() => navigation.navigate("Login")}
+        >
+          <Text style={tw`text-indigo-600 text-lg font-bold`}>
+            Already have an account? Login
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-  },
-  logo: {
-    width: 150, // Adjust logo width
-    height: 150, // Adjust logo height
-    marginBottom: 40, // Space between the logo and the form card
-  },
-  card: {
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
-    color: "#6c63ff",
-  },
-  input: {
-    flex: 1,
-    marginLeft: 10,
-    fontSize: 16,
-    color: "#000",
-  },
-  error: {
-    color: "red",
-    fontSize: 14,
-    marginBottom: 10,
-  },
-  button: {
-    backgroundColor: "#6c63ff",
-    padding: 15,
-    borderRadius: 5,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    marginBottom: 15,
-    width: "100%",
-    backgroundColor: "#f9f9f9",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  link: {
-    marginTop: 15,
-    alignItems: "center",
-  },
-  linkText: {
-    color: "#6c63ff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-});

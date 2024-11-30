@@ -5,13 +5,13 @@ import {
   TextInput,
   Alert,
   TouchableOpacity,
-  StyleSheet,
   Image,
 } from "react-native";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import tw from "twrnc";
 
 const loginSchema = z.object({
   username: z.string().nonempty({ message: "Username is required." }),
@@ -61,125 +61,52 @@ export default function Login({ navigation }: any) {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Logo Section */}
-     
-
+    <View style={tw`flex-1 justify-center items-center bg-white`}>
       {/* Login Card */}
-      <View style={styles.card}>
-        <Text style={styles.heading}>Login</Text>
-        <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Username"
-          placeholderTextColor="#555"
-          style={styles.input}
-          onChangeText={(text) => setValue("username", text)}
-        />
+      <View style={tw`w-4/5 bg-white rounded-lg p-5 shadow-lg`}>
+        <Text style={tw`text-center text-xl font-bold mb-5 text-indigo-600`}>Login</Text>
+
+        <View style={tw`flex-row items-center border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 mb-4`}>
+          <TextInput
+            placeholder="Username"
+            placeholderTextColor="#555"
+            style={tw`flex-1 text-base text-black`}
+            onChangeText={(text) => setValue("username", text)}
+          />
+        </View>
         {errors.username && (
-          <Text style={styles.error}>{errors.username.message}</Text>
+          <Text style={tw`text-red-500 text-sm mb-2`}>{errors.username.message}</Text>
         )}
-</View>
 
-<View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Password"
-          placeholderTextColor="#555"
-          secureTextEntry
-          style={styles.input}
-          onChangeText={(text) => setValue("password", text)}
-        />
+        <View style={tw`flex-row items-center border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 mb-4`}>
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor="#555"
+            secureTextEntry
+            style={tw`flex-1 text-base text-black`}
+            onChangeText={(text) => setValue("password", text)}
+          />
+        </View>
         {errors.password && (
-          <Text style={styles.error}>{errors.password.message}</Text>
+          <Text style={tw`text-red-500 text-sm mb-2`}>{errors.password.message}</Text>
         )}
-</View>
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
-          <Text style={styles.buttonText}>Login</Text>
+        <TouchableOpacity
+          style={tw`bg-indigo-600 py-3 rounded-lg items-center mt-2`}
+          onPress={handleSubmit(onSubmit)}
+        >
+          <Text style={tw`text-white text-base font-bold`}>Login</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.link}
+          style={tw`mt-4 items-center`}
           onPress={() => navigation.navigate("Signup")}
         >
-          <Text style={styles.linkText}>Don’t have an account? Sign Up</Text>
+          <Text style={tw`text-indigo-600 text-base font-bold`}>
+            Don’t have an account? Sign Up
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-  },
-  logo: {
-    width: 150,
-    height: 150,
-    marginBottom: 40,
-  },
-  card: {
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
-    color: "#6c63ff",
-  },
-  input: {
-    flex: 1,
-    marginLeft: 10,
-    fontSize: 16,
-    color: "#000",
-  },
-  error: {
-    color: "red",
-    fontSize: 14,
-    marginBottom: 10,
-  },
-  button: {
-    backgroundColor: "#6c63ff",
-    padding: 15,
-    borderRadius: 5,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  link: {
-    marginTop: 15,
-    alignItems: "center",
-  },
-  linkText: {
-    color: "#6c63ff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    marginBottom: 15,
-    width: "100%",
-    backgroundColor: "#f9f9f9",
-  }
-});

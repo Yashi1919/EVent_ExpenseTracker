@@ -55,7 +55,7 @@ const PremiumModal = ({ isVisible, onClose }) => {
       animationType="slide"
       onRequestClose={onClose}
     >
-      <View style={styles.modalOverlay}>
+      <View style={tw`flex-1 justify-center items-center bg-black bg-opacity-50`}>
         <View style={[tw`bg-white p-4 rounded-lg`, { width: "95%" }]}>
           <Text style={tw`text-lg font-bold text-center mb-4`}>
             Premium Features
@@ -79,13 +79,6 @@ const PremiumModal = ({ isVisible, onClose }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-});
+
 
 export default PremiumModal;
